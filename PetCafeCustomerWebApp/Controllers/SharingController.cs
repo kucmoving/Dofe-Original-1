@@ -1,29 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetCafeCustomerWebApp.Data;
+using PetCafeCustomerWebApp.Interfaces;
 using PetCafeCustomerWebApp.Models;
+
 namespace PetCafeCustomerWebApp.Controllers
 {
     public class SharingController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ISharingRepository _sharingRepository;
 
-        public SharingController(ApplicationDbContext context)
+        public SharingController(ISharingRepository sharingRepository)
         {
-            _context = context;
+            _sharingRepository = sharingRepository;
         }
+
         //will go into applicationDbContext
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            List<Sharing> sharings = _context.Sharings.ToList();
-            //Dogs the name of icollection of dog in customers
+            IEnumerable<Sharing> sharings = await _sharingRepository.GetAll();
+            //Sharings the name of icollection of dog in customers
             //tolist = to make table to be a list
             return View(sharings);
         }
-        public IActionResult Detail(int id) //input id
+
+        public async Task<IActionResult> Detail(int id) //input id
         {
-            Sharing sharing = _context.Sharings.Include(a => a.VisitTime).FirstOrDefault(c => c.Id == id); //from table to one query
+            Sharing sharing = await _sharingRepository.GetByIdAsync(id); //from table to one query
             return View(sharing);
         }
     }

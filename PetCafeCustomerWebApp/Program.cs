@@ -1,10 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using PetCafeCustomerWebApp.Data;
+using PetCafeCustomerWebApp.Interfaces;
+using PetCafeCustomerWebApp.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IDogRepository, DogRepository>();
+builder.Services.AddScoped<ISharingRepository, SharingRepository>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
