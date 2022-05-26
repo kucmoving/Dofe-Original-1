@@ -30,5 +30,20 @@ namespace PetCafeCustomerWebApp.Controllers
             Dog dog = await _dogRepository.GetByIdAsync(id); //from table to one query
             return View(dog);
         }
+        public IActionResult Create()   //can do it as async
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(Dog dog)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(dog);
+            }
+            _dogRepository.Add(dog);
+            return RedirectToAction("index");
+        }
     }
 }

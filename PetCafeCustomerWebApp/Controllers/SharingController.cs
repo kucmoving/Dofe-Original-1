@@ -30,5 +30,7 @@ namespace PetCafeCustomerWebApp.Controllers
             Sharing sharing = await _sharingRepository.GetByIdAsync(id); //from table to one query
             return View(sharing);
         }
+
+
     }
 }
