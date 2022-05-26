@@ -1,0 +1,46 @@
+﻿@model Sharing
+@using PetCafeCustomerWebApp.Data.Enum
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<form method="post" asp-action="Create">
+  <div class="form-group">
+    <label asp-for="SharingName">Sharing Event Name</label>
+    <input asp-for="SharingName" class="form-control" placeholder="Ex. Classical Music Night">
+    <span asp-valiadation-for="SharingName" class="text-danger"></span>
+  </div>
+  <div class="form-group">
+    <label asp-for="Introduction">Introduction</label>
+    <input asp-for="Introduction" class="form-control" placeholder="Ex.You cannot miss it if you like Beethoven, Holst and Handel.">
+    <span asp-valiadation-for="Introduction" class="text-danger"></span>
+  </div>
+  <div class="form-group">
+    <label asp-for="Image">Event Image</label>
+    <input asp-for="Image" class="form-control" placeholder="Ex. Bobby">
+    <span asp-valiadation-for="image" class="text-danger"></span>
+  </div>
+   <!--select-->
+    <div class="form-group">
+    <label asp-for="SharingCategory">Dog category</label>
+    <select asp-for="SharingCategory" asp-items="@Html.GetEnumSelectList<SharingCategory>()" class="form-control form-control-sm">
+        <option>Select a category</option>
+        </select>
+
+   <!--order table, table.column-->
+  <div class="form-group">
+    <label asp-for="VisitTime.Day">Day to visit</label>
+    <input asp-for="VisitTime.Day" class="form-control" placeholder="Ex. Wednesday">
+    <span asp-valiadation-for="VisitTime" class="text-danger"></span>
+  </div>
+    <div class="form-group">
+    <label asp-for="VisitTime.TimeFrame">Time to visit</label>
+    <input asp-for="VisitTime.TimeFrame" class="form-control" placeholder="Ex. Morning">
+    <span asp-valiadation-for="image" class="text-danger"></span>
+  </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+  </div>
+</form>

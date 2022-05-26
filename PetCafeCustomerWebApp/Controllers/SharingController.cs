@@ -24,13 +24,26 @@ namespace PetCafeCustomerWebApp.Controllers
             //tolist = to make table to be a list
             return View(sharings);
         }
-
         public async Task<IActionResult> Detail(int id) //input id
         {
             Sharing sharing = await _sharingRepository.GetByIdAsync(id); //from table to one query
             return View(sharing);
         }
+        public IActionResult Create()   //can do it as async
+        {
+            return View();
+        }
 
 
+        [HttpPost]
+        public async Task<IActionResult> Create(Sharing sharing)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(sharing);
+            }
+            _sharingRepository.Add(sharing);
+            return RedirectToAction("index");
+        }
     }
 }
