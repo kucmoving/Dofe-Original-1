@@ -6,6 +6,8 @@ namespace PetCafeCustomerWebApp.Interfaces
     {
         Task<IEnumerable<Dog>> GetAll();
         Task<Dog> GetByIdAsync(int id);
+
+        Task<Dog> GetByIdAsyncNoTracking(int id);
         Task<IEnumerable<Dog>> GetDogByDay(string day);
         bool Add(Dog dog);  
         bool Update(Dog dog);   

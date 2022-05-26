@@ -65,5 +65,65 @@ namespace PetCafeCustomerWebApp.Controllers
             }
             return View(sharingVM);
         }
+
+        public async Task<IActionResult> Edit(int id) //to copy message as a form data
+        {
+            var sharing = await _sharingRepository.GetByIdAsync(id);
+            if (sharing == null) return View("Error");
+            var sharingVM = new EditSharingViewModel
+            {
+                SharingName = sharing.SharingName,
+                Introduction = sharing.Introduction,
+                VisitTimeId = sharing.VisitTimeId,
+                VisitTime = sharing.VisitTime,
+                URL = sharing.Image,
+                SharingCategory = sharing.SharingCategory
+            };
+            return View(sharingVM);
+        }
+
+        [HttpPost] //to update
+        public async Task<IActionResult> Edit(int id, EditSharingViewModel sharingVM)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(" ", "Failed to edit club");
+                return View("Edit", sharingVM);
+            }
+
+            var customerSharing = await _sharingRepository.GetByIdAsyncNoTracking(id);
+            if (customerSharing != null)
+            {
+                try
+                {
+                    await _photoService.DeletePhotoAsync(customerSharing.Image);
+                }
+                catch (Exception)
+
+                {
+                    ModelState.AddModelError("", "Could not delete photo");
+                    return View(sharingVM);
+                }
+                var photoResult = await _photoService.AddPhotoAsync(sharingVM.Image);
+                var sharing = new Sharing
+                {
+                    Id = id,
+                    SharingName = sharingVM.SharingName,
+                    Introduction = sharingVM.Introduction,
+                    Image = photoResult.Url.ToString(),
+                    VisitTimeId = sharingVM.VisitTimeId,
+                    VisitTime = sharingVM.VisitTime,
+                };
+
+                _sharingRepository.Update(sharing);
+
+                return RedirectToAction("index");
+            }
+            else
+            {
+                return View(sharingVM);
+            }
+        }
+
     }
 }

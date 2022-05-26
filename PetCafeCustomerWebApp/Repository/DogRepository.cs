@@ -35,6 +35,10 @@ namespace PetCafeCustomerWebApp.Repository
         {
             return await _context.Dogs.Include(i => i.VisitTime).FirstOrDefaultAsync(i => i.Id == id);
         }
+        public async Task<Dog> GetByIdAsyncNoTracking(int id) // no tracking in editing , 否則會重疊
+        {
+            return await _context.Dogs.Include(i => i.VisitTime).AsNoTracking().FirstOrDefaultAsync(i => i.Id == id);
+        }
 
         public async Task<IEnumerable<Dog>> GetDogByDay(string day) //goin to dog > VisitTime > day
         {
