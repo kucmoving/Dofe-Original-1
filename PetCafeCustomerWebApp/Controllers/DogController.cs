@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PetCafeCustomerWebApp.Data;
 using PetCafeCustomerWebApp.Models;
+
 namespace PetCafeCustomerWebApp.Controllers
 {
     public class DogController : Controller
@@ -19,6 +21,12 @@ namespace PetCafeCustomerWebApp.Controllers
             //Dogs the name of icollection of dog in customers
             //tolist = to make table to be a list
             return View(dogs);
+        }
+
+        public IActionResult Detail(int id) //input id
+        {
+            Dog dog = _context.Dogs.Include(a => a.VisitTime).FirstOrDefault(c => c.Id == id); //from table to one query
+            return View(dog);
         }
     }
 }
