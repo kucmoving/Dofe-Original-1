@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using PetCafeCustomerWebApp.Data;
+using PetCafeCustomerWebApp.Helpers;
 using PetCafeCustomerWebApp.Interfaces;
 using PetCafeCustomerWebApp.Repository;
+using PetCafeCustomerWebApp.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IDogRepository, DogRepository>();
 builder.Services.AddScoped<ISharingRepository, SharingRepository>();
+builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));

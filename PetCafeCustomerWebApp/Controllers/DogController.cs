@@ -3,16 +3,19 @@ using Microsoft.EntityFrameworkCore;
 using PetCafeCustomerWebApp.Data;
 using PetCafeCustomerWebApp.Interfaces;
 using PetCafeCustomerWebApp.Models;
+using PetCafeCustomerWebApp.ViewModel;
 
 namespace PetCafeCustomerWebApp.Controllers
 {
     public class DogController : Controller
     {
         private readonly IDogRepository _dogRepository;
+        private readonly IPhotoService _photoService;
 
-        public DogController(IDogRepository dogRepository)
+        public DogController(IDogRepository dogRepository, IPhotoService photoService)
         {
             _dogRepository = dogRepository;
+            _photoService = photoService;
         }
 
         //will go into applicationDbContext
@@ -36,14 +39,31 @@ namespace PetCafeCustomerWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Dog dog)
+        public async Task<IActionResult> Create(CreateDogViewModel dogVM)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(dog);
+                var result = await _photoService.AddPhotoAsync(dogVM.Image);
+                var dog = new Dog
+                {
+                    DogName = dogVM.DogName,
+                    Introduction = dogVM.Introduction,
+                    Image = result.Url.ToString(),
+                    VisitTime = new VisitTime
+                    {
+                        Day = dogVM.VisitTime.Day,
+                        TimeFrame = dogVM.VisitTime.TimeFrame
+
+                    }
+                };
+                _dogRepository.Add(dog);
+                return RedirectToAction("index");
             }
-            _dogRepository.Add(dog);
-            return RedirectToAction("index");
+            else
+            {
+                ModelState.AddModelError("", "Photo upload failed");
+            }
+            return View(dogVM);
         }
     }
 }

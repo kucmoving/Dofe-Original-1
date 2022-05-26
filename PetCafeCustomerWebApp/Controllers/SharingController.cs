@@ -3,16 +3,19 @@ using Microsoft.EntityFrameworkCore;
 using PetCafeCustomerWebApp.Data;
 using PetCafeCustomerWebApp.Interfaces;
 using PetCafeCustomerWebApp.Models;
+using PetCafeCustomerWebApp.ViewModel;
 
 namespace PetCafeCustomerWebApp.Controllers
 {
     public class SharingController : Controller
     {
         private readonly ISharingRepository _sharingRepository;
+        private readonly IPhotoService _photoService;
 
-        public SharingController(ISharingRepository sharingRepository)
+        public SharingController(ISharingRepository sharingRepository, IPhotoService photoService)
         {
             _sharingRepository = sharingRepository;
+            _photoService = photoService;
         }
 
         //will go into applicationDbContext
@@ -36,14 +39,31 @@ namespace PetCafeCustomerWebApp.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create(Sharing sharing)
+        public async Task<IActionResult> Create(CreateSharingViewModel sharingVM)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(sharing);
+                var result = await _photoService.AddPhotoAsync(sharingVM.Image);
+                var sharing = new Sharing
+                {
+                    SharingName = sharingVM.SharingName,
+                    Introduction = sharingVM.Introduction,
+                    Image = result.Url.ToString(),
+                    VisitTime = new VisitTime
+                    {
+                        Day = sharingVM.VisitTime.Day,
+                        TimeFrame = sharingVM.VisitTime.TimeFrame
+
+                    }
+                };
+                _sharingRepository.Add(sharing);
+                return RedirectToAction("index");
             }
-            _sharingRepository.Add(sharing);
-            return RedirectToAction("index");
+            else
+            {
+                ModelState.AddModelError("", "Photo upload failed");
+            }
+            return View(sharingVM);
         }
     }
 }
